@@ -1332,13 +1332,23 @@ func (v *VersionedSignedBeaconBlock) ExecutionRequests() (*electra.ExecutionRequ
 
 		return v.Fulu.Message.Body.ExecutionRequests, nil
 	case DataVersionGloas:
+		return nil, errors.New("gloas block uses ParentExecutionRequests, call ParentExecutionRequests() instead")
+	default:
+		return nil, errors.New("unknown version")
+	}
+}
+
+// ParentExecutionRequests returns the Gloas parent execution requests for the block.
+func (v *VersionedSignedBeaconBlock) ParentExecutionRequests() (*gloas.ExecutionRequests, error) {
+	switch v.Version {
+	case DataVersionGloas:
 		if v.Gloas == nil || v.Gloas.Message == nil || v.Gloas.Message.Body == nil {
 			return nil, errors.New("no gloas block")
 		}
 
-		return v.Gloas.Message.Body.ExecutionRequests, nil
+		return v.Gloas.Message.Body.ParentExecutionRequests, nil
 	default:
-		return nil, errors.New("unknown version")
+		return nil, errors.New("ParentExecutionRequests only available for gloas blocks")
 	}
 }
 

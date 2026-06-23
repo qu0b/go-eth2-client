@@ -39,8 +39,8 @@ type beaconBlockBodyYAML struct {
 	SyncAggregate         *altair.SyncAggregate                 `yaml:"sync_aggregate"`
 	ExecutionPayload      *ExecutionPayload                     `yaml:"execution_payload"`
 	BLSToExecutionChanges []*capella.SignedBLSToExecutionChange `yaml:"bls_to_execution_changes"`
-	BlobKZGCommitments    []string                              `yaml:"blob_kzg_commitments"`
-	ExecutionRequests     *electra.ExecutionRequests            `yaml:"execution_requests"`
+	BlobKZGCommitments      []string           `yaml:"blob_kzg_commitments"`
+	ParentExecutionRequests *ExecutionRequests `yaml:"parent_execution_requests"`
 }
 
 // MarshalYAML implements yaml.Marshaler.
@@ -62,8 +62,8 @@ func (b *BeaconBlockBody) MarshalYAML() ([]byte, error) {
 		SyncAggregate:         b.SyncAggregate,
 		ExecutionPayload:      b.ExecutionPayload,
 		BLSToExecutionChanges: b.BLSToExecutionChanges,
-		BlobKZGCommitments:    blobKZGCommitments,
-		ExecutionRequests:     b.ExecutionRequests,
+		BlobKZGCommitments:      blobKZGCommitments,
+		ParentExecutionRequests: b.ParentExecutionRequests,
 	}, yaml.Flow(true))
 	if err != nil {
 		return nil, err

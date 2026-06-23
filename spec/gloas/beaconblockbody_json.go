@@ -40,8 +40,8 @@ type beaconBlockBodyJSON struct {
 	SyncAggregate         *altair.SyncAggregate                 `json:"sync_aggregate"`
 	ExecutionPayload      *ExecutionPayload                     `json:"execution_payload"`
 	BLSToExecutionChanges []*capella.SignedBLSToExecutionChange `json:"bls_to_execution_changes"`
-	BlobKZGCommitments    []string                              `json:"blob_kzg_commitments"`
-	ExecutionRequests     *electra.ExecutionRequests            `json:"execution_requests"`
+	BlobKZGCommitments      []string           `json:"blob_kzg_commitments"`
+	ParentExecutionRequests *ExecutionRequests `json:"parent_execution_requests"`
 }
 
 // MarshalJSON implements json.Marshaler.
@@ -63,8 +63,8 @@ func (b *BeaconBlockBody) MarshalJSON() ([]byte, error) {
 		SyncAggregate:         b.SyncAggregate,
 		ExecutionPayload:      b.ExecutionPayload,
 		BLSToExecutionChanges: b.BLSToExecutionChanges,
-		BlobKZGCommitments:    blobKZGCommitments,
-		ExecutionRequests:     b.ExecutionRequests,
+		BlobKZGCommitments:      blobKZGCommitments,
+		ParentExecutionRequests: b.ParentExecutionRequests,
 	})
 }
 
@@ -169,8 +169,8 @@ func (b *BeaconBlockBody) UnmarshalJSON(input []byte) error {
 		return errors.Wrap(err, "blob_kzg_commitments")
 	}
 
-	if err := json.Unmarshal(raw["execution_requests"], &b.ExecutionRequests); err != nil {
-		return errors.Wrap(err, "execution_requests")
+	if err := json.Unmarshal(raw["parent_execution_requests"], &b.ParentExecutionRequests); err != nil {
+		return errors.Wrap(err, "parent_execution_requests")
 	}
 
 	return nil

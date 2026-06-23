@@ -85,12 +85,12 @@ func (b *BeaconBlockBody) MarshalSSZTo(buf []byte) (dst []byte, err error) {
 	dst = ssz.WriteOffset(dst, offset)
 	offset += len(b.BlobKZGCommitments) * 48
 
-	// Offset (12) 'ExecutionRequests'
+	// Offset (12) 'ParentExecutionRequests'
 	dst = ssz.WriteOffset(dst, offset)
-	if b.ExecutionRequests == nil {
-		b.ExecutionRequests = new(electra.ExecutionRequests)
+	if b.ParentExecutionRequests == nil {
+		b.ParentExecutionRequests = new(ExecutionRequests)
 	}
-	offset += b.ExecutionRequests.SizeSSZ()
+	offset += b.ParentExecutionRequests.SizeSSZ()
 
 	// Field (3) 'ProposerSlashings'
 	if size := len(b.ProposerSlashings); size > 16 {
@@ -186,8 +186,8 @@ func (b *BeaconBlockBody) MarshalSSZTo(buf []byte) (dst []byte, err error) {
 		dst = append(dst, b.BlobKZGCommitments[ii][:]...)
 	}
 
-	// Field (12) 'ExecutionRequests'
-	if dst, err = b.ExecutionRequests.MarshalSSZTo(dst); err != nil {
+	// Field (12) 'ParentExecutionRequests'
+	if dst, err = b.ParentExecutionRequests.MarshalSSZTo(dst); err != nil {
 		return
 	}
 
@@ -271,7 +271,7 @@ func (b *BeaconBlockBody) UnmarshalSSZ(buf []byte) error {
 		return ssz.ErrOffset
 	}
 
-	// Offset (12) 'ExecutionRequests'
+	// Offset (12) 'ParentExecutionRequests'
 	if o12 = ssz.ReadOffset(buf[392:396]); o12 > size || o11 > o12 {
 		return ssz.ErrOffset
 	}
@@ -416,13 +416,13 @@ func (b *BeaconBlockBody) UnmarshalSSZ(buf []byte) error {
 		}
 	}
 
-	// Field (12) 'ExecutionRequests'
+	// Field (12) 'ParentExecutionRequests'
 	{
 		buf = tail[o12:]
-		if b.ExecutionRequests == nil {
-			b.ExecutionRequests = new(electra.ExecutionRequests)
+		if b.ParentExecutionRequests == nil {
+			b.ParentExecutionRequests = new(ExecutionRequests)
 		}
-		if err = b.ExecutionRequests.UnmarshalSSZ(buf); err != nil {
+		if err = b.ParentExecutionRequests.UnmarshalSSZ(buf); err != nil {
 			return err
 		}
 	}
@@ -466,11 +466,11 @@ func (b *BeaconBlockBody) SizeSSZ() (size int) {
 	// Field (11) 'BlobKZGCommitments'
 	size += len(b.BlobKZGCommitments) * 48
 
-	// Field (12) 'ExecutionRequests'
-	if b.ExecutionRequests == nil {
-		b.ExecutionRequests = new(electra.ExecutionRequests)
+	// Field (12) 'ParentExecutionRequests'
+	if b.ParentExecutionRequests == nil {
+		b.ParentExecutionRequests = new(ExecutionRequests)
 	}
-	size += b.ExecutionRequests.SizeSSZ()
+	size += b.ParentExecutionRequests.SizeSSZ()
 
 	return
 }
@@ -621,8 +621,8 @@ func (b *BeaconBlockBody) HashTreeRootWith(hh ssz.HashWalker) (err error) {
 		hh.MerkleizeWithMixin(subIndx, numItems, 4096)
 	}
 
-	// Field (12) 'ExecutionRequests'
-	if err = b.ExecutionRequests.HashTreeRootWith(hh); err != nil {
+	// Field (12) 'ParentExecutionRequests'
+	if err = b.ParentExecutionRequests.HashTreeRootWith(hh); err != nil {
 		return
 	}
 
